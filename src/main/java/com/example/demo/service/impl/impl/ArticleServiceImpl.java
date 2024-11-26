@@ -5,11 +5,15 @@ import com.example.demo.pojo.Article;
 import com.example.demo.pojo.PageBean;
 import com.example.demo.service.impl.ArticleService;
 import com.example.demo.utils.ThreadLocalUtil;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @Service //在实现类中添加注解
@@ -37,7 +41,13 @@ public class ArticleServiceImpl implements ArticleService {
         //开启分页查询PageHelper
         PageHelper.startPage(pageNum,pageSize); //传两个参数
         //调用mapper对象
-        //articleMapper.list(categoryId,state);
+        Map<String,Object> map=ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+        List<Article> as = articleMapper.list(userId,categoryId,state);//PageHelper返回一个List
+        //Page中提供了方法,可以获得PageHelper分类查询后得到的总记录条数和当前页数据,Page相当于Pagehelper的实现类
+        Page<Article> p =(Page<Article>) as;
+        pb.setTotal(p.getTotal());
+        pb.setItems(p.getResult());
         return pb;
     }
 }

@@ -32,4 +32,5 @@ public class ArticleController {
         PageBean<Article> pageBean= articleService.list(pageNum,pageSize,categoryId,state);
         return Result.success(pageBean);
     }
+
 }
