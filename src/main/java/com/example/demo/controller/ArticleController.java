@@ -4,8 +4,10 @@ import com.example.demo.pojo.Article;
 import com.example.demo.pojo.PageBean;
 import com.example.demo.pojo.Result;
 import com.example.demo.service.impl.ArticleService;
+import com.example.demo.service.impl.CategoryService;
 import com.example.demo.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,9 @@ import java.util.Map;
 public class ArticleController {
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private CategoryService categoryService;
+
     @PostMapping
     public Result add(@RequestBody @Validated Article article) {  //Validated用来对类进行校验
         articleService.add(article);
@@ -32,5 +37,19 @@ public class ArticleController {
         PageBean<Article> pageBean= articleService.list(pageNum,pageSize,categoryId,state);
         return Result.success(pageBean);
     }
-
+    @GetMapping("/detail")
+    public Result<Article> detail(@RequestParam Integer id) {
+        Article a = articleService.findById(id);
+        return Result.success(a);
+    }
+    @PutMapping
+    public Result update(@RequestBody @Validated(Article.Update.class) Article article) {
+        articleService.update(article);
+        return Result.success();
+    }
+    @DeleteMapping
+    public Result delete(Integer id){
+        articleService.delete(id);
+        return Result.success();
+    }
 }
